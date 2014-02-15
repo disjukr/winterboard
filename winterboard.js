@@ -3,15 +3,16 @@
     return this.each(function () {
       var board = $(this).data('winterboard');
       if (board)
-        $(this).empty();
+        board.destroy();
       board = new WinterBoard(this, options);
       $(this).data('winterboard', board);
     });
   };
   $.winterboard = function (options) {
     return $(document.body).winterboard(options).data('winterboard');
-  }
+  };
   var WinterBoard = function (container, options) {
+    var self = this;
     var croquis = new Croquis();
     var croquisDOMElement = croquis.getDOMElement();
     $(container).append(croquisDOMElement);
@@ -22,12 +23,15 @@
       });
       $(document).bind('mouseup', function (e) {
         croquis.up(e.clientX, e.clientY);
-        $(document).unbind('mousemove');
-        $(document).unbind('mouseup');
+        $(document).unbind('mousemove mouseup');
       });
     });
     croquis.setCanvasSize(400, 300);
     croquis.addLayer();
     croquis.fillLayer('#fff');
+    self.destroy = function () {
+      $(container).removeData('winterboard');
+      $(container).empty();
+    };
   };
 }(jQuery));
