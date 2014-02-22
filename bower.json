@@ -1,0 +1,19 @@
+{
+  "name": "Winterboard",
+  "main": "winterboard.js",
+  "homepage": "https://github.com/disjukr/winterboard",
+  "authors": [
+    "JongChan Choi <disjukr@naver.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "croquis.js": "~0.1.0"
+  }
+}
