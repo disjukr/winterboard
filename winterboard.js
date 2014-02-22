@@ -26,9 +26,15 @@
     var self = this;
     var croquis = new Croquis();
     var viewport = makeViewPort(croquis, options.viewport);
+    croquis.lockHistory();
     croquis.setCanvasSize(options.canvas.width, options.canvas.height);
     croquis.addLayer();
     croquis.fillLayer('#fff');
+    croquis.addLayer();
+    croquis.selectLayer(1);
+    croquis.unlockHistory();
+    croquis.setToolStabilizeLevel(10);
+    croquis.setToolStabilizeWeight(0.5);
     viewport.croquisElement.toCenter();
     $(container).append(viewport);
     self.destroy = function () {
