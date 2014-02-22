@@ -47,10 +47,38 @@
     croquisElement.relativeCoord = function (absoluteX, absoluteY) {
       var marginLeft = parseInt($(croquisElement).css('margin-left'));
       var marginTop = parseInt($(croquisElement).css('margin-top'));
-      return {
-        x: absoluteX - marginLeft,
-        y: absoluteY - marginTop
-      };
+      var transform = $(croquisElement).css('transform') ||
+                      $(croquisElement).css('-webkit-transform') ||
+                      $(croquisElement).css('-moz-transform') ||
+                      $(croquisElement).css('-ms-transform');
+      var x = absoluteX - marginLeft;
+      var y = absoluteY - marginTop;
+      if (/matrix\(/.test(transform)) {
+        var canvasCenterX = croquis.getCanvasWidth() >> 1;
+        var canvasCenterY = croquis.getCanvasHeight() >> 1;
+        x -= canvasCenterX;
+        y -= canvasCenterY;
+        transform = transform.substr('matrix('.length).split(','); // parse css transform(matrix)
+        var a = parseFloat(transform[0]);
+        var b = parseFloat(transform[1]);
+        var c = parseFloat(transform[2]);
+        var d = parseFloat(transform[3]);
+        var det = 1. / (a * d - b * c); // determinant
+        return {
+          x: (d * det) * x + (-c * det) * y + canvasCenterX,
+          y: (-b * det) * x + (a * det) * y + canvasCenterY
+        }
+      }
+      return {x: x, y: y};
+    };
+    croquisElement.transform = function (scale, rotation) {
+      scale = parseFloat(scale);
+      rotation = parseFloat(rotation);
+      var transform = 'scale(' + scale + ') rotate(' + rotation + 'deg)';
+      $(croquisElement).css('transform', transform)
+                       .css('-webkit-transform', transform)
+                       .css('-moz-transform', transform)
+                       .css('-ms-transform', transform);
     };
     croquisElement.toCenter = function () {
       var canvasCenterX = croquis.getCanvasWidth() >> 1;
