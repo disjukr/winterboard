@@ -35,7 +35,6 @@
     croquis.unlockHistory();
     croquis.setToolStabilizeLevel(10);
     croquis.setToolStabilizeWeight(0.5);
-    viewport.croquisElement.toCenter();
     $(container).append(viewport);
     self.destroy = function () {
       $(container).removeData('winterboard').empty();
@@ -56,8 +55,16 @@
     croquisElement.toCenter = function () {
       var canvasCenterX = croquis.getCanvasWidth() >> 1;
       var canvasCenterY = croquis.getCanvasHeight() >> 1;
-      var viewportCenterX = parseInt($(viewport).css('width')) >> 1;
-      var viewportCenterY = parseInt($(viewport).css('height')) >> 1;
+      var viewportCenterX;
+      var viewportCenterY;
+      if (viewportDocument) {
+        viewportCenterX = viewportDocument.documentElement.clientWidth >> 1;
+        viewportCenterY = viewportDocument.documentElement.clientHeight >> 1;
+      }
+      else {
+        viewportCenterX = parseInt($(viewport).css('width')) >> 1;
+        viewportCenterY = parseInt($(viewport).css('height')) >> 1;
+      }
       $(croquisElement).css('margin-left', viewportCenterX - canvasCenterX)
                        .css('margin-top', viewportCenterY - canvasCenterY);
       return croquisElement;
@@ -66,12 +73,12 @@
                .css('height', options.height);
     viewport.ready(function () {
       viewportDocument = viewport.contents()[0];
-      var viewportBody = viewportDocument.body;
-      $(viewportBody).append(croquisElement)
-                     .css('margin', '0')
-                     .css('overflow', 'hidden')
-                     .css('background-color', options.background);
+      $(viewportDocument.body).append(croquisElement)
+                              .css('margin', '0')
+                              .css('overflow', 'hidden')
+                              .css('background-color', options.background);
       $(viewportDocument).on('mousedown', down);
+      croquisElement.toCenter();
     });
     function down(e) {
       var relativeCoord = croquisElement.relativeCoord(e.clientX, e.clientY);
