@@ -12,42 +12,77 @@
     return $(document.body).winterboard(options).data('winterboard');
   };
   var WinterBoard = function (container, options) {
+    options = $.extend({
+      viewport: {
+        width: 800,
+        height: 600,
+        background: '#333'
+      },
+      canvas: {
+        width: 400,
+        height: 300
+      }
+    }, options);
     var self = this;
     var croquis = new Croquis();
-    var croquisDOMElement = croquis.getDOMElement();
+    var viewport = makeViewPort(croquis, options.viewport);
+    croquis.setCanvasSize(options.canvas.width, options.canvas.height);
+    croquis.addLayer();
+    croquis.fillLayer('#fff');
+    viewport.croquisElement.toCenter();
+    $(container).append(viewport);
+    self.destroy = function () {
+      $(container).removeData('winterboard').empty();
+    };
+  };
+  function makeViewPort(croquis, options) {
     var viewport = $('<iframe sandbox="allow-scripts allow-same-origin" frameborder="0">');
     var viewportDocument;
+    var croquisElement = viewport.croquisElement = croquis.getDOMElement();
+    croquisElement.relativeCoord = function (absoluteX, absoluteY) {
+      var marginLeft = parseInt($(croquisElement).css('margin-left'));
+      var marginTop = parseInt($(croquisElement).css('margin-top'));
+      return {
+        x: absoluteX - marginLeft,
+        y: absoluteY - marginTop
+      };
+    };
+    croquisElement.toCenter = function () {
+      var canvasCenterX = croquis.getCanvasWidth() >> 1;
+      var canvasCenterY = croquis.getCanvasHeight() >> 1;
+      var viewportCenterX = parseInt($(viewport).css('width')) >> 1;
+      var viewportCenterY = parseInt($(viewport).css('height')) >> 1;
+      $(croquisElement).css('margin-left', viewportCenterX - canvasCenterX)
+                       .css('margin-top', viewportCenterY - canvasCenterY);
+      return croquisElement;
+    };
+    $(viewport).css('width', options.width)
+               .css('height', options.height);
     viewport.ready(function () {
       viewportDocument = viewport.contents()[0];
       var viewportBody = viewportDocument.body;
-      $(viewportBody).append(croquisDOMElement);
-      $(viewportBody).css('margin', '0');
-      $(viewportBody).css('overflow', 'hidden');
-      $(viewportBody).css('background-color', '#333');
+      $(viewportBody).append(croquisElement)
+                     .css('margin', '0')
+                     .css('overflow', 'hidden')
+                     .css('background-color', options.background);
       $(viewportDocument).on('mousedown', down);
     });
-    $(container).append(viewport);
-    $(viewport).css('width', '800px');
-    $(viewport).css('height', '600px');
     function down(e) {
-      croquis.down(e.clientX, e.clientY);
+      var relativeCoord = croquisElement.relativeCoord(e.clientX, e.clientY);
+      croquis.down(relativeCoord.x, relativeCoord.y);
       $(viewportDocument).on('mousemove', move)
                          .on('mouseup', up);
     }
     function move(e) {
-      croquis.move(e.clientX, e.clientY);
+      var relativeCoord = croquisElement.relativeCoord(e.clientX, e.clientY);
+      croquis.move(relativeCoord.x, relativeCoord.y);
     }
     function up(e) {
-      croquis.up(e.clientX, e.clientY);
+      var relativeCoord = croquisElement.relativeCoord(e.clientX, e.clientY);
+      croquis.up(relativeCoord.x, relativeCoord.y);
       $(viewportDocument).off('mousemove', move)
                          .off('mouseup', up);
     }
-    croquis.setCanvasSize(400, 300);
-    croquis.addLayer();
-    croquis.fillLayer('#fff');
-    self.destroy = function () {
-      $(container).removeData('winterboard');
-      $(container).empty();
-    };
+    return viewport;
   };
 }(jQuery));
