@@ -1,5 +1,14 @@
 # Winterboard
-Super Simple Drawing Tool for jQuery.
+Super Experimental Drawing Tool for jQuery.
+
+Work In Progress now.
+
+to see current status:
+```sh
+bower install
+python -m SimpleHTTPServer # or `python -m http.server` for python3
+# open `http://localhost:8000/winterboard.html` in the browser
+```
 
 ### Winterboard
 
