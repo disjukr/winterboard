@@ -24,8 +24,8 @@
       }
     }, options);
     var self = this;
-    var croquis = new Croquis();
-    var viewport = makeViewPort(croquis, options.viewport);
+    var croquis = self.croquis = new Croquis();
+    var viewport = self.viewport = makeViewPort(croquis, options.viewport);
     croquis.lockHistory();
     croquis.setCanvasSize(options.canvas.width, options.canvas.height);
     croquis.addLayer();
