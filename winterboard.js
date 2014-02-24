@@ -73,7 +73,7 @@
       }
       return {x: x, y: y};
     };
-    croquisElement.transform = function (scale, rotation) {
+    viewport.transformCanvas = function (scale, rotation) {
       scale = parseFloat(scale);
       rotation = parseFloat(rotation);
       var transform = 'scale(' + scale + ') rotate(' + rotation + 'deg)';
@@ -81,8 +81,9 @@
                        .css('-webkit-transform', transform)
                        .css('-moz-transform', transform)
                        .css('-ms-transform', transform);
+      return croquisElement;
     };
-    croquisElement.toCenter = function () {
+    viewport.translateCanvas = function (x, y) {
       var canvasCenterX = croquis.getCanvasWidth() >> 1;
       var canvasCenterY = croquis.getCanvasHeight() >> 1;
       var viewportCenterX;
@@ -95,8 +96,8 @@
         viewportCenterX = parseInt($(viewport).css('width')) >> 1;
         viewportCenterY = parseInt($(viewport).css('height')) >> 1;
       }
-      $(croquisElement).css('margin-left', viewportCenterX - canvasCenterX)
-                       .css('margin-top', viewportCenterY - canvasCenterY);
+      $(croquisElement).css('margin-left', (viewportCenterX - canvasCenterX) + x)
+                       .css('margin-top', (viewportCenterY - canvasCenterY) + y);
       return croquisElement;
     };
     $(viewport).css('width', options.width)
@@ -112,7 +113,7 @@
       viewportWindow.onscroll = function () { // for ie
         viewportWindow.scrollTo(0, 0);
       };
-      croquisElement.toCenter();
+      viewport.translateCanvas(0, 0);
     });
     function down(e) {
       var relativeCoord = croquisElement.relativeCoord(e.clientX, e.clientY);

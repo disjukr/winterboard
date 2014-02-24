@@ -18,7 +18,7 @@
     var t = 0;
     function rotate() {
       t += 0.05;
-      winterboard.viewport.croquisElement.transform(
+      winterboard.viewport.transformCanvas(
         Math.sin(t) * 0.5 + 1, // scale
         t * 20 // rotation
       );
