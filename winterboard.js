@@ -108,6 +108,10 @@
                               .css('overflow', 'hidden')
                               .css('background-color', options.background);
       $(viewportDocument).on('mousedown', down);
+      var viewportWindow = viewport.get(0).contentWindow;
+      viewportWindow.onscroll = function () { // for ie
+        viewportWindow.scrollTo(0, 0);
+      };
       croquisElement.toCenter();
     });
     function down(e) {
