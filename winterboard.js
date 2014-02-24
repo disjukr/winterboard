@@ -41,7 +41,9 @@
     };
   };
   function makeViewPort(croquis, options) {
-    var viewport = $('<iframe sandbox="allow-scripts allow-same-origin" frameborder="0">');
+    var viewport = $('<iframe src="about:blank"\
+      sandbox="allow-scripts allow-same-origin"\
+      frameborder="0">');
     var viewportDocument;
     var croquisElement = viewport.croquisElement = croquis.getDOMElement();
     croquisElement.relativeCoord = function (absoluteX, absoluteY) {
@@ -99,7 +101,7 @@
     };
     $(viewport).css('width', options.width)
                .css('height', options.height);
-    viewport.ready(function () {
+    viewport.load(function () {
       viewportDocument = viewport.contents()[0];
       $(viewportDocument.body).append(croquisElement)
                               .css('margin', '0')
