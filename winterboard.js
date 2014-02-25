@@ -21,21 +21,27 @@
           height: 300
         },
         background: '#333'
-      }
+      },
+      ui: {}
     }, options);
     var self = this;
     var croquis = self.croquis = new Croquis();
+    ;(function () { // manipulate croquis
+      croquis.lockHistory();
+      croquis.setCanvasSize(options.viewport.canvas.width, options.viewport.canvas.height);
+      croquis.addLayer();
+      croquis.fillLayer('#fff');
+      croquis.addLayer();
+      croquis.selectLayer(1);
+      croquis.unlockHistory();
+      croquis.setToolStabilizeLevel(10);
+      croquis.setToolStabilizeWeight(0.5);
+    })();
     var viewport = self.viewport = makeViewPort(croquis, options.viewport);
-    croquis.lockHistory();
-    croquis.setCanvasSize(options.canvas.width, options.canvas.height);
-    croquis.addLayer();
-    croquis.fillLayer('#fff');
-    croquis.addLayer();
-    croquis.selectLayer(1);
-    croquis.unlockHistory();
-    croquis.setToolStabilizeLevel(10);
-    croquis.setToolStabilizeWeight(0.5);
-    $(container).append(viewport);
+    var ui = self.ui = makeUI(croquis, viewport, options.ui);
+    var layers = $('<div style="position: relative;">');
+    layers.append(viewport, ui);
+    $(container).append(layers);
     self.destroy = function () {
       $(container).removeData('winterboard').empty();
     };
@@ -43,7 +49,7 @@
   function makeViewPort(croquis, options) {
     var viewport = $('<iframe src="about:blank"\
       sandbox="allow-scripts allow-same-origin"\
-      frameborder="0">');
+      frameborder="0" style="position: absolute;">');
     var viewportDocument;
     var croquisElement = viewport.croquisElement = croquis.getDOMElement();
     croquisElement.relativeCoord = function (absoluteX, absoluteY) {
@@ -133,4 +139,9 @@
     }
     return viewport;
   };
+  function makeUI(croquis, viewport, options) {
+    var ui = $('<div style="position: absolute;">');
+    ui.append($('<p style="color: #fff;">UI here</p>'));
+    return ui;
+  }
 }(jQuery));
