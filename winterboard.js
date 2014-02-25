@@ -16,11 +16,11 @@
       viewport: {
         width: 800,
         height: 600,
+        canvas: {
+          width: 400,
+          height: 300
+        },
         background: '#333'
-      },
-      canvas: {
-        width: 400,
-        height: 300
       }
     }, options);
     var self = this;
