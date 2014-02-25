@@ -11,19 +11,7 @@
     var winterboard;
     $(document).ready(function() {
       winterboard = $.winterboard();
-      $(document.body).css('perspective', '400');
-      $(winterboard.viewport).css('transform', 'rotate3d(3, 2, 1, 40deg)');
-      requestAnimationFrame(rotate);
     });
-    var t = 0;
-    function rotate() {
-      t += 0.05;
-      winterboard.viewport.transformCanvas(
-        Math.sin(t) * 0.5 + 1, // scale
-        t * 20 // rotation
-      );
-      requestAnimationFrame(rotate);
-    }
   </script>
 </body>
 </html>
