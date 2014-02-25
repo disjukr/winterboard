@@ -12,7 +12,7 @@
     return $(document.body).winterboard(options).data('winterboard');
   };
   var WinterBoard = function (container, options) {
-    options = $.extend({
+    options = $.extend(true, {
       viewport: {
         width: 800,
         height: 600,
