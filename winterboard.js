@@ -55,10 +55,7 @@
     croquisElement.relativeCoord = function (absoluteX, absoluteY) {
       var marginLeft = parseInt($(croquisElement).css('margin-left'));
       var marginTop = parseInt($(croquisElement).css('margin-top'));
-      var transform = $(croquisElement).css('transform') ||
-                      $(croquisElement).css('-webkit-transform') ||
-                      $(croquisElement).css('-moz-transform') ||
-                      $(croquisElement).css('-ms-transform');
+      var transform = $(croquisElement).css('transform');
       var x = absoluteX - marginLeft;
       var y = absoluteY - marginTop;
       if (/matrix\(/.test(transform)) {
@@ -83,10 +80,7 @@
       scale = parseFloat(scale);
       rotation = parseFloat(rotation);
       var transform = 'scale(' + scale + ') rotate(' + rotation + 'deg)';
-      $(croquisElement).css('transform', transform)
-                       .css('-webkit-transform', transform)
-                       .css('-moz-transform', transform)
-                       .css('-ms-transform', transform);
+      $(croquisElement).css('transform', transform);
       return croquisElement;
     };
     viewport.translateCanvas = function (x, y) {
