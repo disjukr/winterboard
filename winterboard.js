@@ -4,14 +4,14 @@
       var board = $(this).data('winterboard');
       if (board)
         board.destroy();
-      board = new WinterBoard(this, options);
+      board = new Winterboard(this, options);
       $(this).data('winterboard', board);
     });
   };
   $.winterboard = function (options) {
     return $(document.body).winterboard(options).data('winterboard');
   };
-  var WinterBoard = function (container, options) {
+  var Winterboard = function (container, options) {
     options = $.extend(true, {
       viewport: {
         width: 800,
@@ -37,7 +37,7 @@
       croquis.setToolStabilizeLevel(10);
       croquis.setToolStabilizeWeight(0.5);
     })();
-    var viewport = self.viewport = makeViewPort(croquis, options.viewport);
+    var viewport = self.viewport = makeViewport(croquis, options.viewport);
     var ui = self.ui = makeUI(croquis, viewport, options.ui);
     var layers = $('<div style="position: relative;">');
     layers.append(viewport, ui);
@@ -46,7 +46,7 @@
       $(container).removeData('winterboard').empty();
     };
   };
-  function makeViewPort(croquis, options) {
+  function makeViewport(croquis, options) {
     var viewport = $('<iframe src="about:blank"\
       sandbox="allow-scripts allow-same-origin"\
       frameborder="0" style="position: absolute;">');
