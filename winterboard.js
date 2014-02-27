@@ -1,18 +1,18 @@
 ;(function ($) {
-  $.fn.winterboard = function (options) {
+  $.fn.winterboard = function (option) {
     return this.each(function () {
       var board = $(this).data('winterboard');
       if (board)
         board.destroy();
-      board = new Winterboard(this, options);
+      board = new Winterboard(this, option);
       $(this).data('winterboard', board);
     });
   };
-  $.winterboard = function (options) {
-    return $(document.body).winterboard(options).data('winterboard');
+  $.winterboard = function (option) {
+    return $(document.body).winterboard(option).data('winterboard');
   };
-  var Winterboard = function (container, options) {
-    options = $.extend(true, {
+  var Winterboard = function (container, option) {
+    option = $.extend(true, {
       viewport: {
         width: 800,
         height: 600,
@@ -23,12 +23,12 @@
         background: '#333'
       },
       ui: {}
-    }, options);
+    }, option);
     var self = this;
     var croquis = self.croquis = new Croquis();
     ;(function () { // manipulate croquis
       croquis.lockHistory();
-      croquis.setCanvasSize(options.viewport.canvas.width, options.viewport.canvas.height);
+      croquis.setCanvasSize(option.viewport.canvas.width, option.viewport.canvas.height);
       croquis.addLayer();
       croquis.fillLayer('#fff');
       croquis.addLayer();
@@ -37,8 +37,8 @@
       croquis.setToolStabilizeLevel(10);
       croquis.setToolStabilizeWeight(0.5);
     })();
-    var viewport = self.viewport = makeViewport(croquis, options.viewport);
-    var ui = self.ui = makeUI(croquis, viewport, options.ui);
+    var viewport = self.viewport = makeViewport(croquis, option.viewport);
+    var ui = self.ui = makeUI(croquis, viewport, option.ui);
     var layers = $('<div style="position: relative;">');
     layers.append(viewport, ui);
     $(container).append(layers);
@@ -46,7 +46,7 @@
       $(container).removeData('winterboard').empty();
     };
   };
-  function makeViewport(croquis, options) {
+  function makeViewport(croquis, option) {
     var viewport = $('<iframe src="about:blank"\
       sandbox="allow-scripts allow-same-origin"\
       frameborder="0" style="position: absolute;">');
@@ -100,14 +100,14 @@
                        .css('margin-top', (viewportCenterY - canvasCenterY) + y);
       return croquisElement;
     };
-    $(viewport).css('width', options.width)
-               .css('height', options.height);
+    $(viewport).css('width', option.width)
+               .css('height', option.height);
     viewport.load(function () {
       viewportDocument = viewport.contents()[0];
       $(viewportDocument.body).append(croquisElement)
                               .css('margin', '0')
                               .css('overflow', 'hidden')
-                              .css('background-color', options.background);
+                              .css('background-color', option.background);
       $(viewportDocument).on('mousedown', down);
       var viewportWindow = viewport.get(0).contentWindow;
       viewportWindow.onscroll = function () { // for ie
@@ -133,7 +133,7 @@
     }
     return viewport;
   };
-  function makeUI(croquis, viewport, options) {
+  function makeUI(croquis, viewport, option) {
     var ui = $('<div style="position: absolute;">');
     ui.append($('<p style="color: #fff;">UI here</p>'));
     return ui;
