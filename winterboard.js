@@ -70,11 +70,11 @@
           x -= canvasCenterX;
           y -= canvasCenterY;
           transform = transform.substr('matrix('.length).split(','); // parse css transform(matrix)
-          var a = parseFloat(transform[0]);
+          var a = parseFloat(transform[0]); // get matrix elements
           var b = parseFloat(transform[1]);
           var c = parseFloat(transform[2]);
           var d = parseFloat(transform[3]);
-          var det = 1. / (a * d - b * c); // determinant
+          var det = 1. / (a * d - b * c); // inverse determinant
           return {
             x: (d * det) * x + (-c * det) * y + canvasCenterX,
             y: (-b * det) * x + (a * det) * y + canvasCenterY
