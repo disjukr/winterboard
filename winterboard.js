@@ -55,6 +55,9 @@
     return makeScriptFrame(function (viewport) {
       var viewportDocument = viewport.contents()[0];
       var croquisElement = viewport.croquisElement = croquis.getDOMElement();
+      var brushPointer = $('<svg xmlns="http://www.w3.org/2000/svg">');
+      var blackPointer;
+      var whitePointer;
       croquisElement.relativeCoord = function (absoluteX, absoluteY) {
         var marginLeft = parseInt($(croquisElement).css('margin-left'));
         var marginTop = parseInt($(croquisElement).css('margin-top'));
@@ -84,6 +87,7 @@
         rotation = parseFloat(rotation);
         var transform = 'scale(' + scale + ') rotate(' + rotation + 'deg)';
         $(croquisElement).css('transform', transform);
+        brushPointer.css('transform', transform);
         return croquisElement;
       };
       viewport.translateCanvas = function (x, y) {
@@ -111,15 +115,68 @@
         $(viewportDocument).off('mousemove', move)
                            .off('mouseup', up);
       }
-      $(viewport).css('position', 'absolute')
-                 .css('width', option.width)
-                 .css('height', option.height);
-      $(viewportDocument.body).append(croquisElement)
+      function showBrushPointer() {
+        brushPointer.css('visibility', 'visible');
+      }
+      function hideBrushPointer() {
+        brushPointer.css('visibility', 'hidden');
+      }
+      function moveBrushPointer(e) {
+        var svg = brushPointer.get(0);
+        var centerX = svg.getAttribute('width') >> 1;
+        var centerY = svg.getAttribute('height') >> 1;
+        brushPointer.css('left', e.clientX - centerX).css('top', e.clientY - centerY);
+      }
+      function updateBrushPointer() {
+        var tool = croquis.getTool();
+        brushPointer.empty();
+        if (!tool.getImage || !tool.getSize || !tool.getAngle) {
+          blackPointer = whitePointer = null;
+          return;
+        }
+        var image = tool.getImage();
+        var size = tool.getSize();
+        var angle = tool.getAngle();
+        var threshold = image == null ? 0xff : 0x30;
+        var width;
+        var height;
+        function createPointerImage(color) {
+          var image = Croquis.createBrushPointer(image, size, angle, threshold, true, color);
+          width = image.width;
+          height = image.height;
+          var dataURL = image.toDataURL('image/png');
+          var pointerImage = document.createElementNS('http://www.w3.org/2000/svg', 'image');
+          pointerImage.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', dataURL);
+          pointerImage.setAttribute('width', width);
+          pointerImage.setAttribute('height', height);
+          return pointerImage;
+        }
+        blackPointer = createPointerImage('#000');
+        whitePointer = createPointerImage('#fff');
+        var svg = brushPointer.get(0);
+        svg.setAttribute('width', width);
+        svg.setAttribute('height', height);
+        svg.appendChild(blackPointer);
+      }
+      viewport.updateBrushPointer = updateBrushPointer; // manual update
+      croquis.addEventListener('ontool', updateBrushPointer);
+      updateBrushPointer();
+      viewport.css('position', 'absolute')
+              .css('width', option.width)
+              .css('height', option.height);
+      brushPointer.css('position', 'absolute')
+                  .css('pointer-events', 'none')
+                  .css('visibility', 'hidden')
+                  .css('z-index', 999);
+      $(viewportDocument.body).append(croquisElement, brushPointer)
                               .css('margin', '0')
                               .css('overflow', 'hidden')
                               .css('background-color', option.background);
       $(viewportDocument.body).parent().css('cursor', 'crosshair');
-      $(viewportDocument).on('mousedown', down);
+      $(viewportDocument).on('mousedown', down)
+                         .on('mouseenter', showBrushPointer)
+                         .on('mouseleave', hideBrushPointer)
+                         .on('mousemove', moveBrushPointer);
       var viewportWindow = viewport.get(0).contentWindow;
       viewportWindow.onscroll = function () { // for ie
         viewportWindow.scrollTo(0, 0);
