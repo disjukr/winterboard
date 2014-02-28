@@ -130,7 +130,7 @@
       function updateBrushPointer() {
         var tool = croquis.getTool();
         brushPointer.empty();
-        if (!tool.getImage || !tool.getSize || !tool.getAngle) {
+        if (!tool || !tool.getImage || !tool.getSize || !tool.getAngle) {
           blackPointer = whitePointer = null;
           return;
         }
