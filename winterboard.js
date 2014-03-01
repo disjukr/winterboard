@@ -56,6 +56,7 @@
       var viewportDocument = viewport.contents()[0];
       var croquisElement = viewport.croquisElement = croquis.getDOMElement();
       var brushPointer = $('<svg xmlns="http://www.w3.org/2000/svg">');
+      var currentPointer;
       var blackPointer;
       var whitePointer;
       croquisElement.relativeCoord = function (absoluteX, absoluteY) {
@@ -126,12 +127,22 @@
         var centerX = svg.getAttribute('width') >> 1;
         var centerY = svg.getAttribute('height') >> 1;
         brushPointer.css('left', e.clientX - centerX).css('top', e.clientY - centerY);
+        var relativeCoord = croquisElement.relativeCoord(e.clientX, e.clientY);
+        var eyeDrop = croquis.eyeDrop(relativeCoord.x, relativeCoord.y);
+        if (eyeDrop) {
+          var gray = (eyeDrop.r * 0.2989 + eyeDrop.g * 0.5870 + eyeDrop.b * 0.1140) | 0; // grayscale
+          var targetPointer = (gray > 0x80) ? blackPointer : whitePointer;
+          if (currentPointer != targetPointer) {
+            brushPointer.get(0).replaceChild(targetPointer, currentPointer);
+            currentPointer = targetPointer;
+          }
+        }
       }
       function updateBrushPointer() {
         var tool = croquis.getTool();
         brushPointer.empty();
         if (!tool || !tool.getImage || !tool.getSize || !tool.getAngle) {
-          blackPointer = whitePointer = null;
+          currentPointer = blackPointer = whitePointer = null;
           return;
         }
         var image = tool.getImage();
@@ -153,10 +164,11 @@
         }
         blackPointer = createPointerImage('#000');
         whitePointer = createPointerImage('#fff');
+        currentPointer = blackPointer;
         var svg = brushPointer.get(0);
         svg.setAttribute('width', width);
         svg.setAttribute('height', height);
-        svg.appendChild(blackPointer);
+        svg.appendChild(currentPointer);
       }
       viewport.updateBrushPointer = updateBrushPointer; // manual update
       croquis.addEventListener('ontool', updateBrushPointer);
