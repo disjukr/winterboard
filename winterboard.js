@@ -198,7 +198,6 @@
   };
   function makeUI(croquis, viewport, option) {
     var ui = $('<div style="position: absolute;">');
-    ui.append($('<p style="color: #fff;">UI here</p>'));
     return ui;
   }
 }(jQuery));
