@@ -151,8 +151,8 @@
         var threshold = image == null ? 0xff : 0x30;
         var width;
         var height;
-        function createPointerImage(color) {
-          var image = Croquis.createBrushPointer(image, size, angle, threshold, true, color);
+        function createPointerImage(color, shadow) {
+          var image = Croquis.createBrushPointer(image, size, angle, threshold, true, color, shadow);
           width = image.width;
           height = image.height;
           var dataURL = image.toDataURL('image/png');
@@ -162,8 +162,8 @@
           pointerImage.setAttribute('height', height);
           return pointerImage;
         }
-        blackPointer = createPointerImage('#000');
-        whitePointer = createPointerImage('#fff');
+        blackPointer = createPointerImage('#000', '#fff');
+        whitePointer = createPointerImage('#fff', '#000');
         currentPointer = blackPointer;
         var svg = brushPointer.get(0);
         svg.setAttribute('width', width);
