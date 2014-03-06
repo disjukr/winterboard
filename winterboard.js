@@ -83,10 +83,12 @@
         }
         return {x: x, y: y};
       };
-      viewport.transformCanvas = function (scale, rotation) {
+      viewport.transformCanvas = function (scale, rotation, relative) {
         scale = parseFloat(scale);
         rotation = parseFloat(rotation);
         var transform = 'scale(' + scale + ') rotate(' + rotation + 'deg)';
+        if (relative)
+          transform = $(croquisElement).css('transform') + transform;
         $(croquisElement).css('transform', transform);
         brushPointer.css('transform', transform);
         return croquisElement;
