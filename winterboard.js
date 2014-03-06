@@ -39,7 +39,7 @@
     })();
     var viewport = self.viewport = makeViewport(croquis, option.viewport);
     var ui = self.ui = makeUI(croquis, viewport, option.ui);
-    var layers = $('<div style="position: relative;">');
+    var layers = $('<div style="position: relative; width: 100%; height: 100%;">');
     layers.append(viewport, ui);
     $(container).append(layers);
     self.destroy = function () {
