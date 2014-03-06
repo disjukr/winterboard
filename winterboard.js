@@ -59,6 +59,8 @@
       var currentPointer;
       var blackPointer;
       var whitePointer;
+      var canvasX;
+      var canvasY;
       croquisElement.relativeCoord = function (absoluteX, absoluteY) {
         var marginLeft = parseInt($(croquisElement).css('margin-left'));
         var marginTop = parseInt($(croquisElement).css('margin-top'));
@@ -96,6 +98,8 @@
         return croquisElement;
       };
       viewport.translateCanvas = function (x, y) {
+        canvasX = x;
+        canvasY = y;
         var canvasCenterX = croquis.getCanvasWidth() >> 1;
         var canvasCenterY = croquis.getCanvasHeight() >> 1;
         var viewportCenterX = viewportDocument.documentElement.clientWidth >> 1;
@@ -196,6 +200,9 @@
       var viewportWindow = viewport.get(0).contentWindow;
       viewportWindow.onscroll = function () { // for ie
         viewportWindow.scrollTo(0, 0);
+      };
+      viewportWindow.onresize = function () {
+        viewport.translateCanvas(canvasX, canvasY);
       };
       viewport.translateCanvas(0, 0);
     });
