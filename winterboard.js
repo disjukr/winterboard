@@ -87,8 +87,10 @@
         scale = parseFloat(scale);
         rotation = parseFloat(rotation);
         var transform = 'scale(' + scale + ') rotate(' + rotation + 'deg)';
-        if (relative)
-          transform = $(croquisElement).css('transform') + transform;
+        if (relative) {
+          var original = $(croquisElement).css('transform');
+          transform = (original != 'none') ? original + transform : transform;
+        }
         $(croquisElement).css('transform', transform);
         brushPointer.css('transform', transform);
         return croquisElement;
