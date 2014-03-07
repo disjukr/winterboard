@@ -43,6 +43,7 @@
          .css('height', option.height);
     stage.append(viewport);
     $(container).append(stage);
+    ui(stage, croquis, viewport, option);
     self.destroy = function () {
       $(container).removeData('winterboard').empty();
     };
@@ -221,4 +222,16 @@
       viewport.translateCanvas(0, 0);
     });
   };
+  function ui(stage, croquis, viewport, option) {
+    var div = $('<div style="position: absolute;">');
+    var color = $('<input type="color">');
+    color.change(function () {
+      var tool = croquis.getTool();
+      if (tool.setColor) {
+        tool.setColor(color[0].value);
+      }
+    });
+    div.append(color);
+    stage.append(div);
+  }
 }(jQuery));
