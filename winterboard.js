@@ -61,6 +61,19 @@
       var whitePointer;
       var canvasX;
       var canvasY;
+      croquisElement.getTransform = function () {
+        var transform = $(croquisElement).css('transform');
+        var scale = 1;
+        var rotation = 0;
+        if (/matrix\(/.test(transform)) {
+          transform = transform.substr('matrix('.length).split(','); // parse css transform(matrix)
+          var x = parseFloat(transform[0]); // the vector(1, 0) transformed by matrix
+          var y = parseFloat(transform[1]);
+          scale = Math.sqrt(x * x + y * y);
+          rotation = Math.atan2(y, x) * 180 / Math.PI;
+        }
+        return {scale: scale, rotation: rotation};
+      };
       croquisElement.relativeCoord = function (absoluteX, absoluteY) {
         var marginLeft = parseInt($(croquisElement).css('margin-left'));
         var marginTop = parseInt($(croquisElement).css('margin-top'));
