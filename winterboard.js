@@ -13,16 +13,15 @@
   };
   var Winterboard = function (container, option) {
     option = $.extend(true, {
+      width: 800,
+      height: 600,
       viewport: {
-        width: 800,
-        height: 600,
         canvas: {
           width: 400,
           height: 300
         },
         background: '#333'
-      },
-      ui: {}
+      }
     }, option);
     var self = this;
     var croquis = self.croquis = new Croquis();
@@ -38,10 +37,12 @@
       croquis.setToolStabilizeWeight(0.5);
     })();
     var viewport = self.viewport = makeViewport(croquis, option.viewport);
-    var ui = self.ui = makeUI(croquis, viewport, option.ui);
-    var layers = $('<div style="position: relative; width: 100%; height: 100%;">');
-    layers.append(viewport, ui);
-    $(container).append(layers);
+    var stage = $('<div>');
+    stage.css('position', 'relative')
+         .css('width', option.width)
+         .css('height', option.height);
+    stage.append(viewport);
+    $(container).append(stage);
     self.destroy = function () {
       $(container).removeData('winterboard').empty();
     };
@@ -195,8 +196,8 @@
       croquis.addEventListener('ontool', updateBrushPointer);
       updateBrushPointer();
       viewport.css('position', 'absolute')
-              .css('width', option.width)
-              .css('height', option.height);
+              .css('width', '100%')
+              .css('height', '100%');
       brushPointer.css('position', 'absolute')
                   .css('pointer-events', 'none')
                   .css('visibility', 'hidden')
@@ -220,8 +221,4 @@
       viewport.translateCanvas(0, 0);
     });
   };
-  function makeUI(croquis, viewport, option) {
-    var ui = $('<div style="position: absolute;">');
-    return ui;
-  }
 }(jQuery));
