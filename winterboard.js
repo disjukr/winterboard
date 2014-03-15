@@ -207,7 +207,7 @@
                               .css('margin', '0')
                               .css('overflow', 'hidden')
                               .css('background-color', option.background);
-      $(viewportDocument.body).parent().css('cursor', 'crosshair');
+      $(viewportDocument.documentElement).css('cursor', 'crosshair');
       $(viewportDocument).on('mousedown', down)
                          .on('mouseenter', showBrushPointer)
                          .on('mouseleave', hideBrushPointer)
